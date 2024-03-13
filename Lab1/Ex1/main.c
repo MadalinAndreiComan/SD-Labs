@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "../../utils.h"
 
 typedef struct {
@@ -14,24 +12,21 @@ typedef struct {
 
 int main()
 {
-	int n, total_touching_circles = 0;
+	int nr_elements;
+	int total_touching_circles = 0;
 	int i, j;
-	scanf("%d ", &n);
+	scanf("%d ", &nr_elements);
 
 	circle *circles;
-	circles = malloc(n * sizeof(*circles));
+	circles = malloc(nr_elements * sizeof(*circles));
 	DIE(!circles, "malloc() failed");
 
-	for (i = 0; i < n; i++)
+	for (i = 0; i < nr_elements; i++)
 		scanf("%d %d %d ", &circles[i].center.x, &circles[i].center.y,
 			  &circles[i].radius);
 
-//	for (i = 0; i < n; i++)
-//		printf("%d %d %d %d\n", i, circles[i].center.x, circles[i].center.y,
-//			   circles[i].radius);
-
-	for (i = 0; i < n; i++) {
-		for (j = i + 1; j < n; j++) {
+	for (i = 0; i < nr_elements; i++) {
+		for (j = i + 1; j < nr_elements; j++) {
 			int radius_sum = (circles[j].radius + circles[i].radius);
 			radius_sum *= radius_sum;
 
@@ -42,12 +37,8 @@ int main()
 
 			int coordonates_sum = x_diff + y_diff;
 
-//			printf("(%d) v (%d):\n", i, j);
-//			printf("SUM: %d\n", radius_sum);
-//			printf("COORD: %d\n\n", coordonates_sum);
-
-			// sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2) <= r1 + r2
-			// raised everything to power to not use sqrt
+//			sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2) <= r1 + r2
+//			raised everything to power to not use sqrt
 			if (coordonates_sum <= radius_sum) {
 				total_touching_circles++;
 //				printf("circles %d and %d touch\n", i, j);
