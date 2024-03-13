@@ -25,7 +25,7 @@ int main()
 //	char *number = malloc(nr_columns * sizeof(char));
 //	DIE(!number, "malloc() failed");
 //	for (i = 0; i < nr_lines; i++) {
-//		scanf("%s ", number);
+//		scanf("%s", number);
 //		for (j = 0; j < nr_columns; j++)
 //			matrix[i][j] = number[j] - '0';
 //	}
@@ -40,5 +40,7 @@ int main()
 	}
 
 	printf("Sum of numbers = %d", nr_sum);
+	free(matrix[0]);
+	free(matrix);
 	return 0;
 }

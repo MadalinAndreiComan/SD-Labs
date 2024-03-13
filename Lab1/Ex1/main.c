@@ -15,14 +15,14 @@ int main()
 	int nr_elements;
 	int total_touching_circles = 0;
 	int i, j;
-	scanf("%d ", &nr_elements);
+	scanf("%d", &nr_elements);
 
 	circle *circles;
 	circles = malloc(nr_elements * sizeof(*circles));
 	DIE(!circles, "malloc() failed");
 
 	for (i = 0; i < nr_elements; i++)
-		scanf("%d %d %d ", &circles[i].center.x, &circles[i].center.y,
+		scanf("%d %d %d", &circles[i].center.x, &circles[i].center.y,
 			  &circles[i].radius);
 
 	for (i = 0; i < nr_elements; i++) {
