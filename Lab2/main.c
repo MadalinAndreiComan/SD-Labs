@@ -1,9 +1,9 @@
 #include "../utils.h"
 #include "lab2_utils.h"
 
-int main()
+int main(void)
 {
-	linked_list_t* linkedList;
+	linked_list_t *linkedList;
 	int is_int = 0;
 	int is_string = 0;
 
