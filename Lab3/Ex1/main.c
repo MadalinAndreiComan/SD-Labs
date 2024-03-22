@@ -12,9 +12,9 @@ int main()
 	list = dll_create(sizeof(int));
 	scanf("%ld", &size);
 
-	long int curr_nr;
+	int curr_nr;
 	for (int i = 0; i < size; ++i) {
-		scanf("%ld", &curr_nr);
+		scanf("%d", &curr_nr);
 		dll_add_nth_node(list, size, &curr_nr);
 	}
 

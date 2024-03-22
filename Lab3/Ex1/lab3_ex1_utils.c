@@ -58,7 +58,7 @@ dll_get_nth_node(doubly_linked_list_t *list, unsigned int n)
 void
 dll_add_nth_node(doubly_linked_list_t *list, unsigned int n, const void *data)
 {
-	if (n <= 0)
+	if (n < 0)
 		return;
 
 	if (n > list->size)
@@ -77,6 +77,10 @@ dll_add_nth_node(doubly_linked_list_t *list, unsigned int n, const void *data)
 	// TODO: Use dll_get_nth_node();
 
 	if (n == 0) {
+		if (list->head == NULL) {
+			list->head = new_node;
+			return;
+		}
 		new_node->next = list->head;
 		list->head->prev = new_node;
 		list->head = new_node;
@@ -92,6 +96,7 @@ dll_add_nth_node(doubly_linked_list_t *list, unsigned int n, const void *data)
 
 	new_node->next = temp->next;
 	new_node->prev = temp;
+	if(temp->next)
 	temp->next->prev = new_node;
 	temp->next = new_node;
 }
@@ -162,6 +167,17 @@ void
 dll_free(doubly_linked_list_t **pp_list)
 {
 	/* TODO */
+	dll_node_t *temp = (*pp_list)->head;
+	while (temp) {
+		dll_node_t *to_delete = temp;
+		temp = temp->next;
+		free(to_delete->data);
+		to_delete->data = NULL;
+		free(to_delete);
+		to_delete = NULL;
+	}
+	free((*pp_list));
+	(*pp_list) = NULL;
 }
 
 /*
@@ -173,6 +189,12 @@ void
 dll_print_int(doubly_linked_list_t *list)
 {
 	/* TODO */
+	dll_node_t *temp = list->head;
+	while (temp) {
+		printf("%d ", *(int *)temp->data);
+		temp = temp->next;
+	}
+	printf("\n");
 }
 
 /*
@@ -181,6 +203,8 @@ dll_print_int(doubly_linked_list_t *list)
  */
 int is_prim(unsigned int n)
 {
+	if(n < 2)
+		return 0;
 	int i;
 	for (i = 2; i * i <= n; i++)
 		if (n % i == 0)
@@ -198,4 +222,13 @@ split_prime(doubly_linked_list_t *list, doubly_linked_list_t *prime_list,
 			doubly_linked_list_t *rest_list)
 {
 	/* TODO */
+
+	dll_node_t *temp = list->head;
+	while (temp) {
+		if (is_prim(*(int *)temp->data))
+			dll_add_nth_node(prime_list, prime_list->size, temp->data);
+		else
+			dll_add_nth_node(rest_list, rest_list->size, temp->data);
+		temp = temp->next;
+	}
 }
