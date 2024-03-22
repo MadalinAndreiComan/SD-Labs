@@ -1,5 +1,8 @@
 #include "lab3_ex1_utils.h"
-
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
 
 /*
  * Functie care trebuie apelata pentru alocarea si initializarea unei liste.
@@ -8,7 +11,12 @@
 doubly_linked_list_t*
 dll_create(unsigned int data_size)
 {
-	/* TODO */
+	doubly_linked_list_t *new_list = malloc(sizeof (*new_list));
+	new_list->data_size = data_size;
+	new_list->size = 0;
+	new_list->head = NULL;
+
+	return new_list;
 }
 
 /*
@@ -40,6 +48,40 @@ void
 dll_add_nth_node(doubly_linked_list_t* list, unsigned int n, const void* data)
 {
 	/* TODO */
+	if(n <= 0)
+		return;
+
+	if (n > list->size)
+		n = list->size;
+
+	list->size++;
+
+	dll_node_t *new_node = malloc(sizeof(*new_node));
+	DIE(!new_node, "malloc() failed");
+	new_node->next = NULL;
+	new_node->prev = NULL;
+	new_node->data = malloc(list->data_size);
+	DIE(!new_node->data, "malloc() failed");
+	memcpy(new_node->data, data, list->data_size);
+
+	if (n == 0) {
+		new_node->next = list->head;
+		list->head->prev = new_node;
+		list->head = new_node;
+		return;
+	}
+
+	int curr_pos = 0;
+	dll_node_t *temp = list->head;
+	while (curr_pos < n - 1) {
+		temp = temp->next;
+		curr_pos++;
+	}
+
+	new_node->next = temp->next;
+	new_node->prev = temp;
+	temp->next->prev = new_node;
+	temp->next = new_node;
 }
 
 /*
