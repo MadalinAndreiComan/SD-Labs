@@ -140,8 +140,8 @@ dll_remove_nth_node(doubly_linked_list_t *list, unsigned int n)
 	ret_node->next->prev = temp;
 	ret_node->prev = NULL;
 	ret_node->next = NULL;
-	return ret_node;
 
+	return ret_node;
 }
 
 /*
@@ -151,7 +151,7 @@ dll_remove_nth_node(doubly_linked_list_t *list, unsigned int n)
 unsigned int
 dll_get_size(doubly_linked_list_t *list)
 {
-	/* TODO */
+	return list->size;
 }
 
 /*
@@ -181,7 +181,11 @@ dll_print_int(doubly_linked_list_t *list)
  */
 int is_prim(unsigned int n)
 {
-	/* TODO */
+	int i;
+	for (i = 2; i * i <= n; i++)
+		if (n % i == 0)
+			return 0;
+	return 1;
 }
 
 /*
