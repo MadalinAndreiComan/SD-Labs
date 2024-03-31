@@ -1,8 +1,10 @@
-#include "lab3_ex1_utils.h"
+#include "lab3_ex2_utils.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+
+// TODO: USE DIE() MACRO
 
 /*
  * Functie care trebuie apelata pentru alocarea si initializarea unei liste.
@@ -31,9 +33,6 @@ dll_create(unsigned int data_size)
 dll_node_t *
 dll_get_nth_node(doubly_linked_list_t *list, unsigned int n)
 {
-	if (n <= 0)
-		return NULL;
-
 	n = n % list->size;
 	dll_node_t *temp = list->head;
 	int curr_pos = 0;
@@ -58,9 +57,6 @@ dll_get_nth_node(doubly_linked_list_t *list, unsigned int n)
 void
 dll_add_nth_node(doubly_linked_list_t *list, unsigned int n, const void *data)
 {
-	if (n < 0)
-		return;
-
 	if (n > list->size)
 		n = list->size;
 
@@ -79,13 +75,17 @@ dll_add_nth_node(doubly_linked_list_t *list, unsigned int n, const void *data)
 	if (n == 0) {
 		if (list->head == NULL) {
 			list->head = new_node;
+			new_node->next = new_node->prev = new_node;
 			return;
 		}
 		new_node->next = list->head;
+		new_node->prev = list->head->prev;
+		new_node->prev->next = new_node;
 		list->head->prev = new_node;
 		list->head = new_node;
 		return;
 	}
+
 
 	int curr_pos = 0;
 	dll_node_t *temp = list->head;
@@ -94,11 +94,20 @@ dll_add_nth_node(doubly_linked_list_t *list, unsigned int n, const void *data)
 		curr_pos++;
 	}
 
-	new_node->next = temp->next;
+
+	if (temp)
+		new_node->next = temp->next;
+	else
+		new_node->next = list->head;
 	new_node->prev = temp;
 	if (temp->next)
 		temp->next->prev = new_node;
 	temp->next = new_node;
+
+	if (n == list->size - 1) {
+		list->head->prev = new_node;
+		new_node->next = list->head;
+	}
 }
 
 /*
@@ -113,7 +122,7 @@ dll_add_nth_node(doubly_linked_list_t *list, unsigned int n, const void *data)
 dll_node_t *
 dll_remove_nth_node(doubly_linked_list_t *list, unsigned int n)
 {
-	if (n > list->size)
+	if (n >= list->size)
 		n = list->size - 1;
 
 	dll_node_t *ret_node = NULL;
@@ -122,9 +131,16 @@ dll_remove_nth_node(doubly_linked_list_t *list, unsigned int n)
 	// TODO: Use dll_get_nth_node();
 
 	if (n == 0) {
+		if (list->size == 0) {
+			ret_node = list->head;
+			list->head = NULL;
+			return ret_node;
+		}
 		ret_node = list->head;
 		list->head = list->head->next;
-		list->head->prev = NULL;
+		ret_node->prev->next = list->head;
+		list->head->prev = ret_node->prev;
+
 		ret_node->next = NULL;
 		ret_node->prev = NULL;
 		return ret_node;
@@ -140,8 +156,6 @@ dll_remove_nth_node(doubly_linked_list_t *list, unsigned int n)
 	ret_node = temp->next;
 	temp->next = ret_node->next;
 	ret_node->next->prev = temp;
-	ret_node->prev = NULL;
-	ret_node->next = NULL;
 
 	return ret_node;
 }
@@ -164,14 +178,14 @@ void
 dll_free(doubly_linked_list_t **pp_list)
 {
 	dll_node_t *temp = (*pp_list)->head;
-	while (temp) {
+	do {
 		dll_node_t *to_delete = temp;
 		temp = temp->next;
 		free(to_delete->data);
 		to_delete->data = NULL;
 		free(to_delete);
 		to_delete = NULL;
-	}
+	} while (temp != (*pp_list)->head);
 	free((*pp_list));
 	(*pp_list) = NULL;
 }
@@ -182,48 +196,23 @@ dll_free(doubly_linked_list_t **pp_list)
  * din lista inlantuita separate printr-un spatiu.
  */
 void
-dll_print_int(doubly_linked_list_t *list)
+dll_print_int_list(doubly_linked_list_t *list)
 {
 	dll_node_t *temp = list->head;
-	while (temp) {
+	do {
 		printf("%d ", *(int *)temp->data);
 		temp = temp->next;
-	}
+	} while (temp != list->head);
 	printf("\n");
 }
 
-/*
- * Procedura returneaza 1 daca numarul primit este prim, respectiv 0, altfel.
- * Exemplu: pentru 3, functia va returna 1, iar pentru 8, va returna 0.
- */
-int is_prim(unsigned int n)
-{
-	if (n < 2)
-		return 0;
-	int i;
-	for (i = 2; i * i <= n; i++)
-		if (n % i == 0)
-			return 0;
-	return 1;
-}
-
-/*
- * Procedura primește ca parametru un pointer la începutul unei liste dublu
- * înlănțuite și construiește două liste în care se vor afla toate elementele
- * prime, respectiv neprime.
- */
 void
-split_prime(doubly_linked_list_t *list, doubly_linked_list_t *prime_list,
-			doubly_linked_list_t *rest_list)
+dll_print_string_list(doubly_linked_list_t *list)
 {
-	/* TODO */
-
-	dll_node_t *temp = list->head;
-	while (temp) {
-		if (is_prim(*(int *)temp->data))
-			dll_add_nth_node(prime_list, prime_list->size, temp->data);
-		else
-			dll_add_nth_node(rest_list, rest_list->size, temp->data);
-		temp = temp->next;
-	}
+	dll_node_t *temp = list->head->prev;
+	do {
+		printf("%s ", (char *)temp->data);
+		temp = temp->prev;
+	} while (temp != list->head->prev);
+	printf("\n");
 }
